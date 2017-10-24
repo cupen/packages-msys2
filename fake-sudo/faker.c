@@ -4,6 +4,11 @@
 
 #define DEBUG  0
 
+// bool, you're worth it.
+#define bool   char
+#define True   1
+#define False  0
+
 void print_help(){
     char* help_text[] = {
         "help:",
@@ -22,13 +27,17 @@ char* create_command(const int argc, char** argv, const size_t max_size){
     memset(cmd, ' ', max_size);
     int offset = 0;
     char* cmd_idx = NULL;
+    bool is_skipping = True;
     for(int i=1; i < argc; i++){
-        
         char* arg = argv[i];
         size_t arg_size = strlen(arg);
-        if (arg[0] == '-'){
+
+        // skipping args of sudo.
+        if (arg[0] == '-' && is_skipping){
             continue;
         }
+        // end skipping.
+        is_skipping = False;
 
         cmd_idx = cmd + offset;
         offset += arg_size + 1;
@@ -47,6 +56,6 @@ int main(int argc, char** argv){
     }
     
     char* cmd = create_command(argc, argv, 512);
-    printf("cmd=%s\n", cmd);
+    if (DEBUG) printf("cmd=%s\n", cmd);
     return system(cmd);
 }
