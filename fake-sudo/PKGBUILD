@@ -1,0 +1,31 @@
+# Maintainer: cupen<cupen@foxmail.com>
+
+pkgname=fake-sudo
+pkgver=0.1
+pkgrel=1
+pkgdesc="A programs used for solve 'sudo: command not found'."
+arch=('i686' 'x86_64')
+url="https://github.com/cupen/fake-sudo"
+license=('WTFPL')
+# groups=('base-devel')
+depends=('msys2-runtime' 'sh')
+source=(faker.c)
+sha256sums=('SKIP')
+
+binary_path=/usr/bin/sudo
+
+prepare() {
+  mkdir -p ${srcdir}/${pkgname}-${pkgver}
+  cp ${srcdir}/../faker.c ${srcdir}/${pkgname}-${pkgver}
+}
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  gcc -g faker.c -o faker --std=c99
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  # install -Dm0755 sudo $binary_path
+  install -Dm0755 faker ${pkgdir}/usr/bin/sudo
+}
